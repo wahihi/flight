@@ -1,0 +1,266 @@
+/* 1942 Game Styles */
+
+/* General body styling */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #111;
+  color: white;
+  overflow: hidden;
+}
+
+/* Main container */
+#game-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Game canvas */
+#game-canvas {
+  border: 2px solid #333;
+  box-shadow: 0 0 20px rgba(0, 0, 255, 0.5);
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Loading screen */
+.loading-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.loading-bar-container {
+  width: 300px;
+  height: 30px;
+  background-color: #333;
+  border-radius: 15px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.loading-bar {
+  height: 100%;
+  width: 0;
+  background-color: #00f;
+  transition: width 0.3s ease;
+}
+
+/* Main menu screen */
+.main-menu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.game-title {
+  font-size: 5rem;
+  color: white;
+  text-shadow: 0 0 10px #00f, 0 0 20px #00f;
+  margin-bottom: 50px;
+}
+
+.menu-button {
+  background-color: #004;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.5rem;
+  margin: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.2s ease;
+}
+
+.menu-button:hover {
+  background-color: #00f;
+  transform: scale(1.05);
+}
+
+.instructions {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.controls-list {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.credits {
+  position: absolute;
+  bottom: 20px;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+/* Game UI elements */
+.game-ui {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.score-display {
+  font-size: 1.5rem;
+  color: white;
+  text-shadow: 1px 1px 2px black;
+}
+
+.lives-display {
+  display: flex;
+  align-items: center;
+}
+
+.life-icon {
+  width: 30px;
+  height: 30px;
+  margin-left: 5px;
+}
+
+/* Game over screen */
+.game-over {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 75;
+}
+
+.game-over-title {
+  font-size: 5rem;
+  color: #f00;
+  text-shadow: 0 0 10px #f00;
+  margin-bottom: 30px;
+}
+
+.final-score {
+  font-size: 2rem;
+  color: white;
+  margin-bottom: 40px;
+}
+
+/* Mobile controls (touch overlay) */
+.mobile-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 150px;
+  display: none; /* Hidden by default, shown on mobile */
+  z-index: 25;
+}
+
+.d-pad {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 120px;
+  height: 120px;
+}
+
+.d-pad-button {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+}
+
+.d-pad-up { top: 0; left: 40px; }
+.d-pad-right { top: 40px; left: 80px; }
+.d-pad-down { top: 80px; left: 40px; }
+.d-pad-left { top: 40px; left: 0; }
+
+.action-buttons {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+}
+
+.action-button {
+  width: 60px;
+  height: 60px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 30px;
+  margin-left: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+}
+
+/* Mobile detection */
+@media (max-width: 768px) {
+  .mobile-controls {
+    display: block;
+  }
+}
+
+/* Fancy pulse effect for buttons */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Retro scanline effect */
+.scanline-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 10;
+}
