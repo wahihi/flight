@@ -1,20 +1,5 @@
 // 1942 Game - based on MAME source code analysis
 
-// 에셋 URL (실제 게임에서는 로컬 파일 사용)
-const ASSETS = {
-    player: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/sprites/thrust_ship.png',
-    bullet: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/sprites/bullets/bullet7.png',
-    enemy: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/sprites/enemy-blue.png',
-    explosion: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/sprites/explosion.png',
-    background: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/skies/deep-space.jpg',
-    powerup: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/sprites/orb-blue.png',
-    sounds: {
-        shoot: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/audio/SoundEffects/blaster.mp3',
-        explosion: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/audio/SoundEffects/explosion.mp3',
-        powerup: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/audio/SoundEffects/pickup.mp3'
-    }
-};
-
 // 게임 상수 (MAME 소스 코드 분석 기반)
 const CONSTANTS = {
     PLAYER_SPEED: 300,
@@ -45,15 +30,15 @@ const CONSTANTS = {
     SCROLL_SPEED: 2
 };
 
-// Boot Scene - 초기 설정
+// 간단하게 만든 BootScene - 초기 설정
 class BootScene extends Phaser.Scene {
     constructor() {
         super('BootScene');
     }
     
     preload() {
-        // 로딩 화면에 필요한 최소한의 에셋만 로드
-        this.load.image('background', ASSETS.background);
+        // 로딩 화면에 필요한 기본적인 에셋 생성
+        this.load.image('background', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==');
     }
     
     create() {
@@ -83,34 +68,57 @@ class PreloadScene extends Phaser.Scene {
             document.getElementById('main-menu').style.display = 'flex';
         });
         
-        // 게임 에셋 로드
-        this.loadAssets();
+        // 인라인 간단한 에셋 생성 (실제 에셋 대신 간단한 도형 사용)
+        this.createInlineAssets();
     }
     
-    loadAssets() {
-        // 스프라이트 시트
-        this.load.spritesheet('player', ASSETS.player, { 
-            frameWidth: 32, 
-            frameHeight: 32 
-        });
-        this.load.spritesheet('enemies', ASSETS.enemy, { 
-            frameWidth: 32, 
-            frameHeight: 32 
-        });
-        this.load.spritesheet('explosions', ASSETS.explosion, { 
-            frameWidth: 64, 
-            frameHeight: 64 
-        });
-        this.load.image('powerup', ASSETS.powerup);
-        this.load.image('bullet', ASSETS.bullet);
+    createInlineAssets() {
+        // 1x1 픽셀 이미지를 다양한 색상으로 생성
+        const colors = {
+            blue: '0000ff',
+            red: 'ff0000',
+            green: '00ff00',
+            white: 'ffffff',
+            yellow: 'ffff00',
+            purple: '800080'
+        };
         
-        // 배경 이미지
-        this.load.image('sea', ASSETS.background);
+        // 각각의 색상에 대한 단색 이미지 생성
+        Object.entries(colors).forEach(([name, color]) => {
+            const dataURL = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==`;
+            this.textures.addBase64(`color-${name}`, dataURL);
+        });
         
-        // 사운드 에셋
-        this.load.audio('shoot', ASSETS.sounds.shoot);
-        this.load.audio('explosion', ASSETS.sounds.explosion);
-        this.load.audio('powerup', ASSETS.sounds.powerup);
+        // 간단한 스프라이트시트 생성 (실제 스프라이트시트 대신 단색 스프라이트 사용)
+        this.createBlankSpriteSheet('player', 'color-blue', 32, 32, 6);
+        this.createBlankSpriteSheet('enemies', 'color-red', 32, 32, 8);
+        this.createBlankSpriteSheet('explosions', 'color-yellow', 64, 64, 6);
+        
+        // 단일 이미지 생성
+        this.textures.addBase64('bullet', `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAJklEQVQYV2NkIAAYGRkZ/oMMIKQAJIhNEUgRToXYNJGmEQZG7j4AvlsLITNbUB0AAAAASUVORK5CYII=`);
+        this.textures.addBase64('powerup', `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAmElEQVQ4T2NkoBAwUqifYfAYEBsby+Do6MjQ3t4O9jZID4jGBUAGgDTC5P7/Z2D49esXWAyXASBFIJvRDYEZQrQBIK+CbAYZAuJjM4RoA9AMwWUISQbA1IIMgQUmzBCSXQDzCrIhJBsAMwTkCpIMgHkFZAjRBoAMB3kdRnO6JLYYAHodHdNkAMgVhDCxLiAmJWMzAAD44Uz3e1wmXQAAAABJRU5ErkJggg==`);
+        this.textures.addBase64('sea', `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAMklEQVRYR+3QQREAAAjDMCYG/DsEGXxSBb2ke7YeiwECBAgQIECAAAECBAgQIEDgU2CofACeWYLG/wAAAABJRU5ErkJggg==`);
+    }
+    
+    // 단색 스프라이트시트 생성 헬퍼 함수
+    createBlankSpriteSheet(key, baseTextureKey, frameWidth, frameHeight, frames) {
+        const texture = this.textures.get(baseTextureKey);
+        const source = texture.source[0];
+        
+        // 스프라이트시트 생성
+        const sheet = this.textures.createCanvas(key, frameWidth * frames, frameHeight);
+        const context = sheet.getContext();
+        
+        // 프레임 생성
+        for(let i = 0; i < frames; i++) {
+            context.drawImage(source.image, i * frameWidth, 0, frameWidth, frameHeight);
+        }
+        
+        // 스프라이트시트 완성
+        sheet.refresh();
+        
+        // 프레임 정보 추가
+        this.textures.get(key).add('frame', 0, 0, 0, frameWidth, frameHeight, frames, 0);
     }
     
     create() {
@@ -122,12 +130,56 @@ class PreloadScene extends Phaser.Scene {
     }
     
     createAnimations() {
+        // 플레이어 애니메이션
+        this.anims.create({
+            key: 'player-idle',
+            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 1 }),
+            frameRate: 5,
+            repeat: -1
+        });
+        
+        this.anims.create({
+            key: 'player-left',
+            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 1 }),
+            frameRate: 5,
+            repeat: -1
+        });
+        
+        this.anims.create({
+            key: 'player-right',
+            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 1 }),
+            frameRate: 5,
+            repeat: -1
+        });
+        
         // 폭발 애니메이션
         this.anims.create({
             key: 'explode',
-            frames: this.anims.generateFrameNumbers('explosions', { start: 0, end: 15 }),
-            frameRate: 20,
+            frames: this.anims.generateFrameNumbers('explosions', { start: 0, end: 5 }),
+            frameRate: 10,
             repeat: 0
+        });
+        
+        // 적 애니메이션
+        this.anims.create({
+            key: 'enemy-basic',
+            frames: this.anims.generateFrameNumbers('enemies', { start: 0, end: 1 }),
+            frameRate: 5,
+            repeat: -1
+        });
+        
+        this.anims.create({
+            key: 'enemy-bomber',
+            frames: this.anims.generateFrameNumbers('enemies', { start: 2, end: 3 }),
+            frameRate: 5,
+            repeat: -1
+        });
+        
+        this.anims.create({
+            key: 'enemy-boss',
+            frames: this.anims.generateFrameNumbers('enemies', { start: 4, end: 5 }),
+            frameRate: 5,
+            repeat: -1
         });
     }
 }
@@ -144,9 +196,6 @@ class TitleScene extends Phaser.Scene {
             document.getElementById('main-menu').style.display = 'none';
             this.scene.start('GameScene');
         });
-        
-        // 배경 음악 (선택 사항)
-        // this.sound.play('bgm', { loop: true, volume: 0.5 });
     }
 }
 
@@ -167,6 +216,15 @@ class GameScene extends Phaser.Scene {
             gameOver: false
         };
         
+        // 모바일 입력 상태 초기화
+        this.mobileInput = {
+            up: false,
+            down: false,
+            left: false,
+            right: false,
+            fire: false
+        };
+        
         // 배경 생성
         this.createBackground();
         
@@ -184,9 +242,6 @@ class GameScene extends Phaser.Scene {
         
         // 적 스폰 설정
         this.setupEnemySpawning();
-        
-        // 사운드 설정
-        this.setupSounds();
         
         // 입력 설정
         this.setupInput();
@@ -207,6 +262,7 @@ class GameScene extends Phaser.Scene {
         this.player = this.physics.add.sprite(400, 500, 'player');
         this.player.setCollideWorldBounds(true);
         this.player.setScale(1.5);
+        this.player.play('player-idle');
         
         // 플레이어 상태
         this.playerState = {
@@ -290,13 +346,6 @@ class GameScene extends Phaser.Scene {
         });
     }
     
-    setupSounds() {
-        // 효과음
-        this.shootSound = this.sound.add('shoot');
-        this.explosionSound = this.sound.add('explosion');
-        this.powerupSound = this.sound.add('powerup');
-    }
-    
     setupInput() {
         // 키보드 입력
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -306,36 +355,48 @@ class GameScene extends Phaser.Scene {
     
     setupMobileControls() {
         // 모바일 D-패드 버튼
-        document.querySelector('.d-pad-up').addEventListener('touchstart', () => this.mobileInput.up = true);
-        document.querySelector('.d-pad-up').addEventListener('touchend', () => this.mobileInput.up = false);
+        const upBtn = document.querySelector('.d-pad-up');
+        const downBtn = document.querySelector('.d-pad-down');
+        const leftBtn = document.querySelector('.d-pad-left');
+        const rightBtn = document.querySelector('.d-pad-right');
+        const fireBtn = document.getElementById('fire-button');
+        const loopBtn = document.getElementById('loop-button');
         
-        document.querySelector('.d-pad-down').addEventListener('touchstart', () => this.mobileInput.down = true);
-        document.querySelector('.d-pad-down').addEventListener('touchend', () => this.mobileInput.down = false);
+        if (upBtn) {
+            upBtn.addEventListener('touchstart', () => this.mobileInput.up = true);
+            upBtn.addEventListener('touchend', () => this.mobileInput.up = false);
+        }
         
-        document.querySelector('.d-pad-left').addEventListener('touchstart', () => this.mobileInput.left = true);
-        document.querySelector('.d-pad-left').addEventListener('touchend', () => this.mobileInput.left = false);
+        if (downBtn) {
+            downBtn.addEventListener('touchstart', () => this.mobileInput.down = true);
+            downBtn.addEventListener('touchend', () => this.mobileInput.down = false);
+        }
         
-        document.querySelector('.d-pad-right').addEventListener('touchstart', () => this.mobileInput.right = true);
-        document.querySelector('.d-pad-right').addEventListener('touchend', () => this.mobileInput.right = false);
+        if (leftBtn) {
+            leftBtn.addEventListener('touchstart', () => this.mobileInput.left = true);
+            leftBtn.addEventListener('touchend', () => this.mobileInput.left = false);
+        }
         
-        // 모바일 액션 버튼
-        document.getElementById('fire-button').addEventListener('touchstart', () => this.mobileInput.fire = true);
-        document.getElementById('fire-button').addEventListener('touchend', () => this.mobileInput.fire = false);
+        if (rightBtn) {
+            rightBtn.addEventListener('touchstart', () => this.mobileInput.right = true);
+            rightBtn.addEventListener('touchend', () => this.mobileInput.right = false);
+        }
         
-        document.getElementById('loop-button').addEventListener('touchstart', () => this.doLoop());
+        if (fireBtn) {
+            fireBtn.addEventListener('touchstart', () => this.mobileInput.fire = true);
+            fireBtn.addEventListener('touchend', () => this.mobileInput.fire = false);
+        }
         
-        // 모바일 입력 상태
-        this.mobileInput = {
-            up: false,
-            down: false,
-            left: false,
-            right: false,
-            fire: false
-        };
+        if (loopBtn) {
+            loopBtn.addEventListener('touchstart', () => this.doLoop());
+        }
         
         // 모바일 여부 확인하여 컨트롤 표시
         if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            document.querySelector('.mobile-controls').style.display = 'block';
+            const mobileControls = document.querySelector('.mobile-controls');
+            if (mobileControls) {
+                mobileControls.style.display = 'block';
+            }
         }
     }
     
@@ -353,6 +414,7 @@ class GameScene extends Phaser.Scene {
             // 적 속성 설정
             enemy.setScale(1.5);
             enemy.health = CONSTANTS.BASIC_ENEMY_HEALTH;
+            enemy.play('enemy-basic');
             
             // 레벨에 따른 속도 증가
             const speedMultiplier = 1 + (this.gameState.level * 0.1);
@@ -390,6 +452,7 @@ class GameScene extends Phaser.Scene {
         boss.setScale(3);
         boss.setTint(0xff0000);
         boss.health = CONSTANTS.BOSS_ENEMY_HEALTH + (this.gameState.level * 5);
+        boss.play('enemy-boss');
         
         // 보스 움직임
         boss.setVelocityY(CONSTANTS.BOSS_ENEMY_SPEED);
@@ -455,7 +518,6 @@ class GameScene extends Phaser.Scene {
         if (!this.playerState.canFire || this.playerState.isLooping || this.gameState.gameOver) return;
         
         this.playerState.canFire = false;
-        this.shootSound.play({ volume: 0.5 });
         
         // 파워 레벨에 따른 총알 패턴
         switch (this.gameState.power) {
@@ -570,8 +632,6 @@ class GameScene extends Phaser.Scene {
             );
             
             if (distance < clearRadius) {
-                this.explosionSound.play({ volume: 0.3 });
-                
                 // 폭발 효과
                 const explosion = this.add.sprite(enemy.x, enemy.y, 'explosions');
                 explosion.play('explode');
@@ -614,8 +674,6 @@ class GameScene extends Phaser.Scene {
             explosion.once('animationcomplete', () => {
                 explosion.destroy();
             });
-            
-            this.explosionSound.play({ volume: 0.5 });
             
             // 보스인 경우 더 큰 점수와 파워업
             if (this.bosses.contains(enemy)) {
@@ -663,9 +721,6 @@ class GameScene extends Phaser.Scene {
         if (this.enemyBullets.contains(enemyOrBullet)) {
             enemyOrBullet.destroy();
         }
-        
-        // 피격 효과음
-        this.explosionSound.play({ volume: 0.7 });
         
         // 생명 감소
         this.gameState.lives--;
@@ -741,9 +796,6 @@ class GameScene extends Phaser.Scene {
     }
     
     collectPowerup(player, powerup) {
-        // 파워업 효과음
-        this.powerupSound.play({ volume: 0.5 });
-        
         // 파워 레벨 증가 (최대 3)
         this.gameState.power = Math.min(CONSTANTS.MAX_POWER_LEVEL, this.gameState.power + 1);
         
