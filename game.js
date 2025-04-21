@@ -1,23 +1,17 @@
 // 1942 Game - based on MAME source code analysis
-// 메인 게임 구성
-const config = {
-    type: Phaser.AUTO,
-    width: 800,
-    height: 600,
-    parent: 'game-canvas',
-    backgroundColor: '#000',
-    physics: {
-        default: 'arcade',
-        arcade: {
-            gravity: { y: 0 },
-            debug: false
-        }
-    },
-    scene: [BootScene, PreloadScene, TitleScene, GameScene, GameOverScene],
-    pixelArt: true,
-    scale: {
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH
+
+// 에셋 URL (실제 게임에서는 로컬 파일 사용)
+const ASSETS = {
+    player: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/sprites/thrust_ship.png',
+    bullet: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/sprites/bullets/bullet7.png',
+    enemy: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/sprites/enemy-blue.png',
+    explosion: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/sprites/explosion.png',
+    background: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/skies/deep-space.jpg',
+    powerup: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/sprites/orb-blue.png',
+    sounds: {
+        shoot: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/audio/SoundEffects/blaster.mp3',
+        explosion: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/audio/SoundEffects/explosion.mp3',
+        powerup: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/audio/SoundEffects/pickup.mp3'
     }
 };
 
@@ -49,21 +43,6 @@ const CONSTANTS = {
     BOSS_SPAWN_DELAY: 30000,
     BULLET_FIRE_DELAY: 300,
     SCROLL_SPEED: 2
-};
-
-// 에셋 URL (실제 게임에서는 로컬 파일 사용)
-const ASSETS = {
-    player: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/sprites/thrust_ship.png',
-    bullet: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/sprites/bullets/bullet7.png',
-    enemy: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/sprites/enemy-blue.png',
-    explosion: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/sprites/explosion.png',
-    background: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/skies/deep-space.jpg',
-    powerup: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/sprites/orb-blue.png',
-    sounds: {
-        shoot: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/audio/SoundEffects/blaster.mp3',
-        explosion: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/audio/SoundEffects/explosion.mp3',
-        powerup: 'https://raw.githubusercontent.com/photonstorm/phaser3-examples/master/public/assets/audio/SoundEffects/pickup.mp3'
-    }
 };
 
 // Boot Scene - 초기 설정
@@ -814,20 +793,20 @@ class GameScene extends Phaser.Scene {
         this.player.setVelocity(0);
         
         // 키보드 입력
-        if (this.cursors.left.isDown || this.mobileInput.left) {
+        if (this.cursors.left.isDown || this.mobileInput?.left) {
             this.player.setVelocityX(-CONSTANTS.PLAYER_SPEED);
-        } else if (this.cursors.right.isDown || this.mobileInput.right) {
+        } else if (this.cursors.right.isDown || this.mobileInput?.right) {
             this.player.setVelocityX(CONSTANTS.PLAYER_SPEED);
         }
         
-        if (this.cursors.up.isDown || this.mobileInput.up) {
+        if (this.cursors.up.isDown || this.mobileInput?.up) {
             this.player.setVelocityY(-CONSTANTS.PLAYER_SPEED);
-        } else if (this.cursors.down.isDown || this.mobileInput.down) {
+        } else if (this.cursors.down.isDown || this.mobileInput?.down) {
             this.player.setVelocityY(CONSTANTS.PLAYER_SPEED);
         }
         
         // 총알 발사
-        if ((this.fireKey.isDown || this.mobileInput.fire) && this.playerState.canFire) {
+        if ((this.fireKey.isDown || this.mobileInput?.fire) && this.playerState.canFire) {
             this.playerShoot();
         }
         
@@ -848,6 +827,28 @@ class GameOverScene extends Phaser.Scene {
         // 게임 오버 씬은 HTML로 처리하므로 비어있음
     }
 }
+
+// 메인 게임 구성 (이제 모든 장면 클래스들이 정의된 후에 배치)
+const config = {
+    type: Phaser.AUTO,
+    width: 800,
+    height: 600,
+    parent: 'game-canvas',
+    backgroundColor: '#000',
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 0 },
+            debug: false
+        }
+    },
+    scene: [BootScene, PreloadScene, TitleScene, GameScene, GameOverScene],
+    pixelArt: true,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    }
+};
 
 // DOM이 로드되면 게임 시작
 document.addEventListener('DOMContentLoaded', () => {
