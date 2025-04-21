@@ -30,15 +30,14 @@ const CONSTANTS = {
     SCROLL_SPEED: 2
 };
 
-// 간단하게 만든 BootScene - 초기 설정
+// Boot Scene - 초기 설정
 class BootScene extends Phaser.Scene {
     constructor() {
         super('BootScene');
     }
     
     preload() {
-        // 로딩 화면에 필요한 기본적인 에셋 생성
-        this.load.image('background', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==');
+        // 에셋 없이 바로 다음 씬으로 넘어감
     }
     
     create() {
@@ -67,120 +66,11 @@ class PreloadScene extends Phaser.Scene {
             document.getElementById('loading-screen').style.display = 'none';
             document.getElementById('main-menu').style.display = 'flex';
         });
-        
-        // 인라인 간단한 에셋 생성 (실제 에셋 대신 간단한 도형 사용)
-        this.createInlineAssets();
-    }
-    
-    createInlineAssets() {
-        // 1x1 픽셀 이미지를 다양한 색상으로 생성
-        const colors = {
-            blue: '0000ff',
-            red: 'ff0000',
-            green: '00ff00',
-            white: 'ffffff',
-            yellow: 'ffff00',
-            purple: '800080'
-        };
-        
-        // 각각의 색상에 대한 단색 이미지 생성
-        Object.entries(colors).forEach(([name, color]) => {
-            const dataURL = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==`;
-            this.textures.addBase64(`color-${name}`, dataURL);
-        });
-        
-        // 간단한 스프라이트시트 생성 (실제 스프라이트시트 대신 단색 스프라이트 사용)
-        this.createBlankSpriteSheet('player', 'color-blue', 32, 32, 6);
-        this.createBlankSpriteSheet('enemies', 'color-red', 32, 32, 8);
-        this.createBlankSpriteSheet('explosions', 'color-yellow', 64, 64, 6);
-        
-        // 단일 이미지 생성
-        this.textures.addBase64('bullet', `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAJklEQVQYV2NkIAAYGRkZ/oMMIKQAJIhNEUgRToXYNJGmEQZG7j4AvlsLITNbUB0AAAAASUVORK5CYII=`);
-        this.textures.addBase64('powerup', `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAmElEQVQ4T2NkoBAwUqifYfAYEBsby+Do6MjQ3t4O9jZID4jGBUAGgDTC5P7/Z2D49esXWAyXASBFIJvRDYEZQrQBIK+CbAYZAuJjM4RoA9AMwWUISQbA1IIMgQUmzBCSXQDzCrIhJBsAMwTkCpIMgHkFZAjRBoAMB3kdRnO6JLYYAHodHdNkAMgVhDCxLiAmJWMzAAD44Uz3e1wmXQAAAABJRU5ErkJggg==`);
-        this.textures.addBase64('sea', `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAMklEQVRYR+3QQREAAAjDMCYG/DsEGXxSBb2ke7YeiwECBAgQIECAAAECBAgQIEDgU2CofACeWYLG/wAAAABJRU5ErkJggg==`);
-    }
-    
-    // 단색 스프라이트시트 생성 헬퍼 함수
-    createBlankSpriteSheet(key, baseTextureKey, frameWidth, frameHeight, frames) {
-        const texture = this.textures.get(baseTextureKey);
-        const source = texture.source[0];
-        
-        // 스프라이트시트 생성
-        const sheet = this.textures.createCanvas(key, frameWidth * frames, frameHeight);
-        const context = sheet.getContext();
-        
-        // 프레임 생성
-        for(let i = 0; i < frames; i++) {
-            context.drawImage(source.image, i * frameWidth, 0, frameWidth, frameHeight);
-        }
-        
-        // 스프라이트시트 완성
-        sheet.refresh();
-        
-        // 프레임 정보 추가
-        this.textures.get(key).add('frame', 0, 0, 0, frameWidth, frameHeight, frames, 0);
     }
     
     create() {
-        // 애니메이션 생성
-        this.createAnimations();
-        
         // 타이틀 씬으로 이동
         this.scene.start('TitleScene');
-    }
-    
-    createAnimations() {
-        // 플레이어 애니메이션
-        this.anims.create({
-            key: 'player-idle',
-            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 1 }),
-            frameRate: 5,
-            repeat: -1
-        });
-        
-        this.anims.create({
-            key: 'player-left',
-            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 1 }),
-            frameRate: 5,
-            repeat: -1
-        });
-        
-        this.anims.create({
-            key: 'player-right',
-            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 1 }),
-            frameRate: 5,
-            repeat: -1
-        });
-        
-        // 폭발 애니메이션
-        this.anims.create({
-            key: 'explode',
-            frames: this.anims.generateFrameNumbers('explosions', { start: 0, end: 5 }),
-            frameRate: 10,
-            repeat: 0
-        });
-        
-        // 적 애니메이션
-        this.anims.create({
-            key: 'enemy-basic',
-            frames: this.anims.generateFrameNumbers('enemies', { start: 0, end: 1 }),
-            frameRate: 5,
-            repeat: -1
-        });
-        
-        this.anims.create({
-            key: 'enemy-bomber',
-            frames: this.anims.generateFrameNumbers('enemies', { start: 2, end: 3 }),
-            frameRate: 5,
-            repeat: -1
-        });
-        
-        this.anims.create({
-            key: 'enemy-boss',
-            frames: this.anims.generateFrameNumbers('enemies', { start: 4, end: 5 }),
-            frameRate: 5,
-            repeat: -1
-        });
     }
 }
 
@@ -203,6 +93,19 @@ class TitleScene extends Phaser.Scene {
 class GameScene extends Phaser.Scene {
     constructor() {
         super('GameScene');
+        
+        // 색상 정의
+        this.colors = {
+            background: 0x0a1f44,
+            player: 0x4080ff,
+            enemy: 0xff4040,
+            boss: 0xff00ff,
+            bullet: 0xffff00,
+            enemyBullet: 0xff0000,
+            powerup: 0x00ffff,
+            explosion: 0xffaa00,
+            ui: 0xffffff
+        };
     }
     
     create() {
@@ -251,18 +154,42 @@ class GameScene extends Phaser.Scene {
     }
     
     createBackground() {
-        // 배경 타일 스프라이트 (스크롤 효과)
-        this.background = this.add.tileSprite(0, 0, 800, 600, 'sea')
-            .setOrigin(0)
-            .setScrollFactor(0);
+        // 배경 그래픽 그리기
+        const bg = this.add.graphics();
+        bg.fillStyle(this.colors.background, 1);
+        bg.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
+        
+        // 스크롤 효과를 위한 배경 변수
+        this.scrollY = 0;
+        
+        // 배경에 별 만들기
+        this.stars = [];
+        for (let i = 0; i < 100; i++) {
+            const x = Phaser.Math.Between(0, this.cameras.main.width);
+            const y = Phaser.Math.Between(0, this.cameras.main.height);
+            const size = Phaser.Math.Between(1, 3);
+            const speed = Phaser.Math.Between(1, 3);
+            
+            const star = this.add.graphics();
+            star.fillStyle(0xffffff, Phaser.Math.Between(5, 10) / 10);
+            star.fillCircle(x, y, size);
+            star.speed = speed;
+            
+            this.stars.push(star);
+        }
     }
     
     createPlayer() {
-        // 플레이어 스프라이트 생성
-        this.player = this.physics.add.sprite(400, 500, 'player');
-        this.player.setCollideWorldBounds(true);
-        this.player.setScale(1.5);
-        this.player.play('player-idle');
+        // 플레이어 스프라이트(그래픽으로 생성)
+        this.player = this.add.graphics();
+        this.player.fillStyle(this.colors.player, 1);
+        this.drawPlayerShip(this.player, 0, 0);
+        
+        // 물리 처리를 위한 컨테이너 추가
+        this.playerContainer = this.add.container(400, 500, [this.player]);
+        this.physics.world.enable(this.playerContainer);
+        this.playerContainer.body.setSize(30, 30);
+        this.playerContainer.body.setCollideWorldBounds(true);
         
         // 플레이어 상태
         this.playerState = {
@@ -271,6 +198,38 @@ class GameScene extends Phaser.Scene {
             canFire: true,
             lastFired: 0
         };
+    }
+    
+    // 플레이어 비행기 그리기
+    drawPlayerShip(graphics, x, y) {
+        // 비행기 모양 그리기
+        graphics.clear();
+        graphics.fillStyle(this.colors.player, 1);
+        
+        // 비행기 본체
+        graphics.fillTriangle(
+            x, y - 15,
+            x - 10, y + 10,
+            x + 10, y + 10
+        );
+        
+        // 비행기 날개
+        graphics.fillStyle(0x6090ff, 1);
+        graphics.fillTriangle(
+            x - 5, y,
+            x - 20, y + 10,
+            x - 5, y + 5
+        );
+        
+        graphics.fillTriangle(
+            x + 5, y,
+            x + 20, y + 10,
+            x + 5, y + 5
+        );
+        
+        // 비행기 꼬리
+        graphics.fillStyle(0x60a0ff, 1);
+        graphics.fillRect(x - 2, y + 10, 4, 10);
     }
     
     createGroups() {
@@ -284,6 +243,9 @@ class GameScene extends Phaser.Scene {
         
         // 파워업 그룹
         this.powerups = this.physics.add.group();
+        
+        // 폭발 효과 그룹
+        this.explosions = this.add.group();
     }
     
     createUI() {
@@ -318,14 +280,14 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.playerBullets, this.bosses, this.hitEnemy, null, this);
         
         // 적 총알과 플레이어 충돌
-        this.physics.add.collider(this.enemyBullets, this.player, this.hitPlayer, null, this);
+        this.physics.add.collider(this.enemyBullets, this.playerContainer, this.hitPlayer, null, this);
         
         // 적과 플레이어 충돌
-        this.physics.add.collider(this.enemies, this.player, this.hitPlayer, null, this);
-        this.physics.add.collider(this.bosses, this.player, this.hitPlayer, null, this);
+        this.physics.add.collider(this.enemies, this.playerContainer, this.hitPlayer, null, this);
+        this.physics.add.collider(this.bosses, this.playerContainer, this.hitPlayer, null, this);
         
         // 파워업과 플레이어 충돌
-        this.physics.add.overlap(this.player, this.powerups, this.collectPowerup, null, this);
+        this.physics.add.overlap(this.playerContainer, this.powerups, this.collectPowerup, null, this);
     }
     
     setupEnemySpawning() {
@@ -409,33 +371,47 @@ class GameScene extends Phaser.Scene {
         for (let i = 0; i < enemyCount; i++) {
             // 랜덤 위치
             const x = Phaser.Math.Between(50, 750);
-            const enemy = this.enemies.create(x, -50, 'enemies');
+            
+            // 적 그래픽 생성
+            const enemy = this.add.graphics();
+            enemy.fillStyle(this.colors.enemy, 1);
+            this.drawEnemyShip(enemy, 0, 0);
+            
+            // 물리 처리를 위한 컨테이너
+            const enemyContainer = this.add.container(x, -50, [enemy]);
+            this.physics.world.enable(enemyContainer);
+            enemyContainer.body.setSize(25, 25);
             
             // 적 속성 설정
-            enemy.setScale(1.5);
-            enemy.health = CONSTANTS.BASIC_ENEMY_HEALTH;
-            enemy.play('enemy-basic');
+            enemyContainer.health = CONSTANTS.BASIC_ENEMY_HEALTH;
             
             // 레벨에 따른 속도 증가
             const speedMultiplier = 1 + (this.gameState.level * 0.1);
-            enemy.setVelocityY(CONSTANTS.BASIC_ENEMY_SPEED * speedMultiplier);
+            enemyContainer.body.setVelocityY(CONSTANTS.BASIC_ENEMY_SPEED * speedMultiplier);
             
             // 좌우 움직임 추가
             if (Phaser.Math.Between(0, 1)) {
-                enemy.setVelocityX(Phaser.Math.Between(-50, 50));
+                enemyContainer.body.setVelocityX(Phaser.Math.Between(-50, 50));
             }
             
             // 화면 밖으로 나가면 제거
-            enemy.checkWorldBounds = true;
-            enemy.outOfBoundsKill = true;
+            enemyContainer.body.onWorldBounds = true;
+            enemyContainer.body.world.on('worldbounds', (body) => {
+                if (body.gameObject === enemyContainer) {
+                    enemyContainer.destroy();
+                }
+            });
+            
+            // 적 그룹에 추가
+            this.enemies.add(enemyContainer);
             
             // 랜덤하게 총알 발사
             if (Phaser.Math.Between(0, 100) < 30) {
                 this.time.addEvent({
                     delay: Phaser.Math.Between(1000, 3000),
                     callback: () => {
-                        if (enemy.active && !this.gameState.gameOver) {
-                            this.enemyShoot(enemy);
+                        if (enemyContainer.active && !this.gameState.gameOver) {
+                            this.enemyShoot(enemyContainer);
                         }
                     },
                     callbackScope: this
@@ -444,29 +420,63 @@ class GameScene extends Phaser.Scene {
         }
     }
     
+    // 적 비행기 그리기
+    drawEnemyShip(graphics, x, y) {
+        graphics.clear();
+        
+        // 적 비행기 본체
+        graphics.fillTriangle(
+            x, y + 15,
+            x - 10, y - 10,
+            x + 10, y - 10
+        );
+        
+        // 적 비행기 날개
+        graphics.fillTriangle(
+            x - 5, y,
+            x - 15, y - 10,
+            x - 5, y - 5
+        );
+        
+        graphics.fillTriangle(
+            x + 5, y,
+            x + 15, y - 10,
+            x + 5, y - 5
+        );
+    }
+    
     spawnBoss() {
         if (this.gameState.gameOver || this.bosses.getLength() > 0 || this.gameState.level < 3) return;
         
-        // 보스 생성
-        const boss = this.bosses.create(400, -100, 'enemies');
-        boss.setScale(3);
-        boss.setTint(0xff0000);
-        boss.health = CONSTANTS.BOSS_ENEMY_HEALTH + (this.gameState.level * 5);
-        boss.play('enemy-boss');
+        // 보스 그래픽 생성
+        const boss = this.add.graphics();
+        boss.fillStyle(this.colors.boss, 1);
+        this.drawBossShip(boss, 0, 0);
+        
+        // 보스 컨테이너
+        const bossContainer = this.add.container(400, -100, [boss]);
+        this.physics.world.enable(bossContainer);
+        bossContainer.body.setSize(60, 60);
+        
+        // 보스 속성 설정
+        bossContainer.health = CONSTANTS.BOSS_ENEMY_HEALTH + (this.gameState.level * 5);
         
         // 보스 움직임
-        boss.setVelocityY(CONSTANTS.BOSS_ENEMY_SPEED);
+        bossContainer.body.setVelocityY(CONSTANTS.BOSS_ENEMY_SPEED);
+        
+        // 보스 그룹에 추가
+        this.bosses.add(bossContainer);
         
         // 화면 일정 위치에 도달하면 좌우 움직임 시작
         this.time.addEvent({
             delay: 3000,
             callback: () => {
-                if (boss.active && !this.gameState.gameOver) {
-                    boss.setVelocityY(0);
+                if (bossContainer.active && !this.gameState.gameOver) {
+                    bossContainer.body.setVelocityY(0);
                     
                     // 좌우 움직임 트윈
                     this.tweens.add({
-                        targets: boss,
+                        targets: bossContainer,
                         x: { from: 200, to: 600 },
                         ease: 'Sine.easeInOut',
                         duration: 3000,
@@ -478,8 +488,8 @@ class GameScene extends Phaser.Scene {
                     this.bossAttackTimer = this.time.addEvent({
                         delay: 2000,
                         callback: () => {
-                            if (boss.active && !this.gameState.gameOver) {
-                                this.bossAttack(boss);
+                            if (bossContainer.active && !this.gameState.gameOver) {
+                                this.bossAttack(bossContainer);
                             }
                         },
                         callbackScope: this,
@@ -491,26 +501,66 @@ class GameScene extends Phaser.Scene {
         });
     }
     
-    bossAttack(boss) {
+    // 보스 비행기 그리기
+    drawBossShip(graphics, x, y) {
+        graphics.clear();
+        
+        // 보스 몸체 (큰 육각형)
+        graphics.fillStyle(this.colors.boss, 1);
+        
+        // 육각형 그리기
+        const size = 30;
+        const points = [];
+        
+        for (let i = 0; i < 6; i++) {
+            const angle = (i * Math.PI / 3) - Math.PI / 2;
+            const px = x + size * Math.cos(angle);
+            const py = y + size * Math.sin(angle);
+            points.push({ x: px, y: py });
+        }
+        
+        graphics.fillPoints(points, true, true);
+        
+        // 보스 무기
+        graphics.fillStyle(0xaa00aa, 1);
+        graphics.fillCircle(x - 15, y, 8);
+        graphics.fillCircle(x + 15, y, 8);
+        graphics.fillRect(x - 5, y + 15, 10, 15);
+    }
+    
+    bossAttack(bossContainer) {
         // 보스 공격 패턴 - 여러 방향으로 총알 발사
         const bulletCount = 8;
         
         for (let i = 0; i < bulletCount; i++) {
             const angle = (i / bulletCount) * Math.PI * 2;
-            const bullet = this.enemyBullets.create(boss.x, boss.y, 'bullet');
             
-            bullet.setScale(1);
-            bullet.setTint(0xff0000);
+            // 총알 그래픽 생성
+            const bulletGraphic = this.add.graphics();
+            bulletGraphic.fillStyle(this.colors.enemyBullet, 1);
+            bulletGraphic.fillCircle(0, 0, 5);
+            
+            // 총알 컨테이너
+            const bullet = this.add.container(bossContainer.x, bossContainer.y, [bulletGraphic]);
+            this.physics.world.enable(bullet);
+            bullet.body.setCircle(5);
             
             // 방향에 따른 속도 계산
             const vx = Math.cos(angle) * CONSTANTS.ENEMY_BULLET_SPEED;
             const vy = Math.sin(angle) * CONSTANTS.ENEMY_BULLET_SPEED;
             
-            bullet.setVelocity(vx, vy);
+            bullet.body.setVelocity(vx, vy);
             
             // 화면 밖으로 나가면 제거
-            bullet.checkWorldBounds = true;
-            bullet.outOfBoundsKill = true;
+            bullet.body.onWorldBounds = true;
+            bullet.body.world.on('worldbounds', (body) => {
+                if (body.gameObject === bullet) {
+                    bullet.destroy();
+                }
+            });
+            
+            // 적 총알 그룹에 추가
+            this.enemyBullets.add(bullet);
         }
     }
     
@@ -523,20 +573,20 @@ class GameScene extends Phaser.Scene {
         switch (this.gameState.power) {
             case 1:
                 // 단일 총알
-                this.fireBullet(this.player.x, this.player.y - 20);
+                this.fireBullet(this.playerContainer.x, this.playerContainer.y - 20);
                 break;
             
             case 2:
                 // 이중 총알
-                this.fireBullet(this.player.x - 15, this.player.y - 20);
-                this.fireBullet(this.player.x + 15, this.player.y - 20);
+                this.fireBullet(this.playerContainer.x - 15, this.playerContainer.y - 15);
+                this.fireBullet(this.playerContainer.x + 15, this.playerContainer.y - 15);
                 break;
             
             case 3:
                 // 삼중 총알 (퍼짐)
-                this.fireBullet(this.player.x, this.player.y - 25);
-                this.fireBullet(this.player.x - 20, this.player.y - 15, -50);
-                this.fireBullet(this.player.x + 20, this.player.y - 15, 50);
+                this.fireBullet(this.playerContainer.x, this.playerContainer.y - 25);
+                this.fireBullet(this.playerContainer.x - 20, this.playerContainer.y - 15, -50);
+                this.fireBullet(this.playerContainer.x + 20, this.playerContainer.y - 15, 50);
                 break;
         }
         
@@ -551,36 +601,64 @@ class GameScene extends Phaser.Scene {
     }
     
     fireBullet(x, y, vx = 0) {
-        const bullet = this.playerBullets.create(x, y, 'bullet');
-        bullet.setScale(0.5);
-        bullet.setVelocity(vx, -CONSTANTS.BULLET_SPEED);
+        // 총알 그래픽 생성
+        const bulletGraphic = this.add.graphics();
+        bulletGraphic.fillStyle(this.colors.bullet, 1);
+        bulletGraphic.fillCircle(0, 0, 4);
+        
+        // 총알 컨테이너
+        const bullet = this.add.container(x, y, [bulletGraphic]);
+        this.physics.world.enable(bullet);
+        bullet.body.setCircle(4);
+        
+        bullet.body.setVelocity(vx, -CONSTANTS.BULLET_SPEED);
         
         // 화면 밖으로 나가면 제거
-        bullet.checkWorldBounds = true;
-        bullet.outOfBoundsKill = true;
+        bullet.body.onWorldBounds = true;
+        bullet.body.world.on('worldbounds', (body) => {
+            if (body.gameObject === bullet) {
+                bullet.destroy();
+            }
+        });
+        
+        // 플레이어 총알 그룹에 추가
+        this.playerBullets.add(bullet);
     }
     
-    enemyShoot(enemy) {
-        if (!enemy.active || this.gameState.gameOver) return;
+    enemyShoot(enemyContainer) {
+        if (!enemyContainer.active || this.gameState.gameOver) return;
         
-        const bullet = this.enemyBullets.create(enemy.x, enemy.y + 20, 'bullet');
-        bullet.setScale(0.5);
-        bullet.setTint(0xff0000);
+        // 총알 그래픽 생성
+        const bulletGraphic = this.add.graphics();
+        bulletGraphic.fillStyle(this.colors.enemyBullet, 1);
+        bulletGraphic.fillCircle(0, 0, 4);
+        
+        // 총알 컨테이너
+        const bullet = this.add.container(enemyContainer.x, enemyContainer.y + 20, [bulletGraphic]);
+        this.physics.world.enable(bullet);
+        bullet.body.setCircle(4);
         
         // 플레이어 방향으로 총알 발사
         const angle = Phaser.Math.Angle.Between(
-            enemy.x, enemy.y,
-            this.player.x, this.player.y
+            enemyContainer.x, enemyContainer.y,
+            this.playerContainer.x, this.playerContainer.y
         );
         
         const vx = Math.cos(angle) * CONSTANTS.ENEMY_BULLET_SPEED;
         const vy = Math.sin(angle) * CONSTANTS.ENEMY_BULLET_SPEED;
         
-        bullet.setVelocity(vx, vy);
+        bullet.body.setVelocity(vx, vy);
         
         // 화면 밖으로 나가면 제거
-        bullet.checkWorldBounds = true;
-        bullet.outOfBoundsKill = true;
+        bullet.body.onWorldBounds = true;
+        bullet.body.world.on('worldbounds', (body) => {
+            if (body.gameObject === bullet) {
+                bullet.destroy();
+            }
+        });
+        
+        // 적 총알 그룹에 추가
+        this.enemyBullets.add(bullet);
     }
     
     doLoop() {
@@ -596,14 +674,14 @@ class GameScene extends Phaser.Scene {
         
         // 회피기동 애니메이션
         this.tweens.add({
-            targets: this.player,
-            y: this.player.y - 150,
+            targets: this.playerContainer,
+            y: this.playerContainer.y - 150,
             angle: 360,
             duration: CONSTANTS.LOOP_DURATION,
             ease: 'Power1',
             yoyo: true,
             onComplete: () => {
-                this.player.angle = 0;
+                this.playerContainer.angle = 0;
                 this.playerState.isLooping = false;
                 
                 // 회피기동 후 짧은 무적 시간
@@ -627,17 +705,13 @@ class GameScene extends Phaser.Scene {
         // 적 그룹 순회하여 제거
         this.enemies.getChildren().forEach(enemy => {
             const distance = Phaser.Math.Distance.Between(
-                this.player.x, this.player.y,
+                this.playerContainer.x, this.playerContainer.y,
                 enemy.x, enemy.y
             );
             
             if (distance < clearRadius) {
                 // 폭발 효과
-                const explosion = this.add.sprite(enemy.x, enemy.y, 'explosions');
-                explosion.play('explode');
-                explosion.once('animationcomplete', () => {
-                    explosion.destroy();
-                });
+                this.createExplosion(enemy.x, enemy.y);
                 
                 // 점수 추가
                 this.gameState.score += 50;
@@ -648,7 +722,7 @@ class GameScene extends Phaser.Scene {
         // 적 총알 제거
         this.enemyBullets.getChildren().forEach(bullet => {
             const distance = Phaser.Math.Distance.Between(
-                this.player.x, this.player.y,
+                this.playerContainer.x, this.playerContainer.y,
                 bullet.x, bullet.y
             );
             
@@ -665,15 +739,11 @@ class GameScene extends Phaser.Scene {
         bullet.destroy();
         
         // 적 체력 감소
-        enemy.health = enemy.health - 1 || 0;
+        enemy.health--;
         
         if (enemy.health <= 0) {
             // 폭발 효과
-            const explosion = this.add.sprite(enemy.x, enemy.y, 'explosions');
-            explosion.play('explode');
-            explosion.once('animationcomplete', () => {
-                explosion.destroy();
-            });
+            this.createExplosion(enemy.x, enemy.y);
             
             // 보스인 경우 더 큰 점수와 파워업
             if (this.bosses.contains(enemy)) {
@@ -707,6 +777,34 @@ class GameScene extends Phaser.Scene {
         }
     }
     
+    createExplosion(x, y, scale = 1) {
+        // 폭발 효과 그래픽 생성
+        const explosion = this.add.graphics();
+        explosion.fillStyle(this.colors.explosion, 1);
+        
+        // 폭발 애니메이션 (크기가 변하는 원)
+        let size = 5;
+        const maxSize = 30 * scale;
+        
+        // 타이머로 폭발 애니메이션 구현
+        const expandTimer = this.time.addEvent({
+            delay: 50,
+            callback: () => {
+                explosion.clear();
+                explosion.fillStyle(this.colors.explosion, 1 - (size / maxSize));
+                explosion.fillCircle(x, y, size);
+                size += 5;
+                
+                if (size > maxSize) {
+                    expandTimer.remove();
+                    explosion.destroy();
+                }
+            },
+            callbackScope: this,
+            repeat: 6
+        });
+    }
+    
     hitPlayer(player, enemyOrBullet) {
         // 무적 상태인 경우 무시
         if (this.playerState.isInvulnerable || this.gameState.gameOver) {
@@ -730,11 +828,9 @@ class GameScene extends Phaser.Scene {
             this.gameState.gameOver = true;
             
             // 폭발 효과
-            const explosion = this.add.sprite(player.x, player.y, 'explosions');
-            explosion.setScale(2);
-            explosion.play('explode');
+            this.createExplosion(this.playerContainer.x, this.playerContainer.y, 2);
             
-            player.destroy();
+            this.playerContainer.destroy();
             
             // 게임 오버 화면 표시
             this.time.addEvent({
@@ -753,13 +849,13 @@ class GameScene extends Phaser.Scene {
             
             // 깜빡임 효과
             this.tweens.add({
-                targets: player,
+                targets: this.playerContainer,
                 alpha: 0,
                 duration: 100,
                 repeat: 5,
                 yoyo: true,
                 onComplete: () => {
-                    player.alpha = 1;
+                    this.playerContainer.alpha = 1;
                     
                     // 무적 시간 후 상태 복귀
                     this.time.addEvent({
@@ -777,9 +873,19 @@ class GameScene extends Phaser.Scene {
     }
     
     spawnPowerup(x, y) {
-        const powerup = this.powerups.create(x, y, 'powerup');
-        powerup.setScale(0.5);
-        powerup.setVelocity(0, CONSTANTS.POWERUP_SPEED);
+        // 파워업 그래픽 생성
+        const powerupGraphic = this.add.graphics();
+        powerupGraphic.fillStyle(this.colors.powerup, 1);
+        powerupGraphic.fillCircle(0, 0, 10);
+        powerupGraphic.fillStyle(0xffffff, 1);
+        powerupGraphic.fillText('P', -3, 3, { font: '12px Arial' });
+        
+        // 파워업 컨테이너
+        const powerup = this.add.container(x, y, [powerupGraphic]);
+        this.physics.world.enable(powerup);
+        powerup.body.setCircle(10);
+        
+        powerup.body.setVelocity(0, CONSTANTS.POWERUP_SPEED);
         
         // 반짝이는 효과
         this.tweens.add({
@@ -791,8 +897,15 @@ class GameScene extends Phaser.Scene {
         });
         
         // 화면 밖으로 나가면 제거
-        powerup.checkWorldBounds = true;
-        powerup.outOfBoundsKill = true;
+        powerup.body.onWorldBounds = true;
+        powerup.body.world.on('worldbounds', (body) => {
+            if (body.gameObject === powerup) {
+                powerup.destroy();
+            }
+        });
+        
+        // 파워업 그룹에 추가
+        this.powerups.add(powerup);
     }
     
     collectPowerup(player, powerup) {
@@ -831,30 +944,36 @@ class GameScene extends Phaser.Scene {
     update() {
         if (this.gameState.gameOver) return;
         
-        // 배경 스크롤
-        this.background.tilePositionY -= CONSTANTS.SCROLL_SPEED;
+        // 배경 별 스크롤
+        this.scrollY += CONSTANTS.SCROLL_SPEED;
+        this.stars.forEach(star => {
+            star.y += star.speed;
+            if (star.y > this.cameras.main.height) {
+                star.y = 0;
+            }
+        });
         
         // 플레이어 입력 처리
         this.handlePlayerInput();
     }
     
     handlePlayerInput() {
-        if (this.playerState.isLooping || !this.player.active) return;
+        if (this.playerState.isLooping || !this.playerContainer.active) return;
         
         // 속도 초기화
-        this.player.setVelocity(0);
+        this.playerContainer.body.setVelocity(0);
         
         // 키보드 입력
         if (this.cursors.left.isDown || this.mobileInput?.left) {
-            this.player.setVelocityX(-CONSTANTS.PLAYER_SPEED);
+            this.playerContainer.body.setVelocityX(-CONSTANTS.PLAYER_SPEED);
         } else if (this.cursors.right.isDown || this.mobileInput?.right) {
-            this.player.setVelocityX(CONSTANTS.PLAYER_SPEED);
+            this.playerContainer.body.setVelocityX(CONSTANTS.PLAYER_SPEED);
         }
         
         if (this.cursors.up.isDown || this.mobileInput?.up) {
-            this.player.setVelocityY(-CONSTANTS.PLAYER_SPEED);
+            this.playerContainer.body.setVelocityY(-CONSTANTS.PLAYER_SPEED);
         } else if (this.cursors.down.isDown || this.mobileInput?.down) {
-            this.player.setVelocityY(CONSTANTS.PLAYER_SPEED);
+            this.playerContainer.body.setVelocityY(CONSTANTS.PLAYER_SPEED);
         }
         
         // 총알 발사
