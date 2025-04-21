@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1942 - 클래식 아케이드 게임</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.60.0/phaser.min.js"></script>
+</head>
+<body>
+    <div id="game-container">
+        <div id="game-canvas"></div>
+        
+        <!-- 로딩 화면 -->
+        <div class="loading-screen" id="loading-screen">
+            <h1>1942</h1>
+            <div class="loading-bar-container">
+                <div class="loading-bar" id="loading-bar"></div>
+            </div>
+            <p id="loading-text">로딩 중... 0%</p>
+        </div>
+        
+        <!-- 메인 메뉴 -->
+        <div class="main-menu" id="main-menu" style="display: none;">
+            <h1 class="game-title">1942</h1>
+            <button class="menu-button pulse" id="start-button">게임 시작</button>
+            
+            <div class="instructions">
+                <h2>조작 방법</h2>
+                <div class="controls-list">
+                    <p>방향키: 비행기 이동</p>
+                    <p>스페이스바: 총알 발사</p>
+                    <p>Z키: 회피기동</p>
+                </div>
+            </div>
+            
+            <p class="credits">원작: CAPCOM (1984)</p>
+        </div>
+        
+        <!-- 게임 오버 화면 -->
+        <div class="game-over" id="game-over" style="display: none;">
+            <h1 class="game-over-title">GAME OVER</h1>
+            <div class="final-score" id="final-score">최종 점수: 0</div>
+            <button class="menu-button" id="restart-button">다시 시작</button>
+        </div>
+        
+        <!-- 모바일 컨트롤 -->
+        <div class="mobile-controls">
+            <div class="d-pad">
+                <div class="d-pad-button d-pad-up">↑</div>
+                <div class="d-pad-button d-pad-right">→</div>
+                <div class="d-pad-button d-pad-down">↓</div>
+                <div class="d-pad-button d-pad-left">←</div>
+            </div>
+            <div class="action-buttons">
+                <div class="action-button" id="loop-button">회피</div>
+                <div class="action-button" id="fire-button">발사</div>
+            </div>
+        </div>
+        
+        <!-- 레트로 스캔라인 효과 -->
+        <div class="scanline-effect"></div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
